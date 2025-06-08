@@ -25,10 +25,25 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  const books = require("./booksdb.js");
-  return res.status(200).json(books);
-});
+public_users.get('/',async function (req, res) {
+  try {
+  const bookss = await new Promise((resolve, reject) => {
+    if (books){ 
+      resolve(books); 
+    }
+    else {  
+      reject(new Error("No books found"));
+  }
+
+  });
+  return res.status(200).json(bookss);
+} 
+  catch (error){
+     
+     return res.status(404).json({message: "not found", error: error.message});
+  }
+     
+  });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res){ 
