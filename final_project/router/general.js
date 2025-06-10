@@ -73,16 +73,32 @@ public_users.get('/isbn/:isbn', async function (req, res) {
 
 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
   const author = req.params.author;
-  const books = require("./booksdb.js");
-  for (let key of Object.keys(books)) {
-    const book = books[key];
-    if (book.author === author) {
-      return res.status(200).json(book);
+  console.log(author)
+  console.log(typeof(author))
+  try {
+    const bookssss = await new Promise((resolve, reject) => {
+      let book = null;
+      for (let key of Object.keys(books)) {
+        console.log((books[key].author == author))
+        if (books[key].author == author) {
+          book = books[key];
+          console.log(book)
+        }
+      }
+      console.log(book)
+      if (book != null) {
+        resolve(book);
+      }
+      else { reject(new Error("book not found")); }
     }
+    );
+    return res.status(200).json(bookssss)
   }
-  return res.status(404).json({ message: "Not found" });
+  catch (error) {
+    return res.status(404).json({ message: "not found", error: error.message });
+  }
 });
 
 // Get all books based on title
